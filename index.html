@@ -3,37 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Centered Page</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pranav Mistry Style Website</title>
+
     <style>
-        /* Custom styling to ensure the content is centered both vertically and horizontally */
-        html, body {
-            height: 100%;
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .vertical-center {
-            min-height: 100%; /* Fallback for browsers do not support vh unit */
-            min-height: 100vh; /* These two lines are counted as one :-)       */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        /* Body Styles */
+        body {
+            font-family: "Georgia", serif;
+            background-color: #ffffff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Main content wrapper */
+        .container {
+            max-width: 800px;
+            padding: 50px;
+            margin: 0;
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 48px;
+            font-weight: normal;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        /* Paragraph styles */
+        p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        /* Link styles */
+        a {
+            color: #0000ff;
+            text-decoration: none;
+            border-bottom: 1px solid #0000ff;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom: none;
+            color: #ff0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            p {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="container vertical-center">
-        <div class="row">
-            <div class="col text-center">
-                <h1>Hi Welcome to my website. </h1>
-                <p>This is my personal website. and this is a paragraph</p>
-            </div>
-        </div>
+
+    <div class="container">
+        <h1>Hi there :)</h1>
+
+        <p>
+            Welcome to my website, 
+            I am undergrad at IIT Bombay, pursuing Chemistry and research in Artificial intelligence.
+            I am building a deep neural network that upscales the image resolution, this is highly used in the 
+            field of medical imaging.
+        </p>
+
+        <p>
+            Currently serving as the CEO of of ONDC Connect
+        </p>
+
+        
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
