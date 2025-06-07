@@ -3,97 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pranav Mistry Style Website</title>
-
+    <title>Your Name</title>
     <style>
-        /* Global Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Body Styles */
         body {
-            font-family: "Georgia", serif;
-            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
             color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Main content wrapper */
-        .container {
+            background-color: #fff;
+            padding: 40px 20px;
             max-width: 800px;
-            padding: 50px;
-            margin: 0;
+            margin: 0 auto;
         }
 
-        /* Heading styles */
+        .profile-section {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+            align-items: flex-start;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin-top: 90px;
+        }
+
+        .profile-content {
+            flex: 1;
+        }
+
         h1 {
-            font-size: 48px;
-            font-weight: normal;
-            margin-bottom: 30px;
-            color: #000;
-        }
-
-        /* Paragraph styles */
-        p {
-            font-size: 18px;
-            line-height: 1.8;
+            font-size: 2rem;
+            font-weight: 400;
             margin-bottom: 20px;
             color: #000;
         }
 
-        /* Link styles */
-        a {
-            color: #0000ff;
+        p {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .projects {
+            list-style: none;
+        }
+
+        .projects li {
+            margin-bottom: 8px;
+        }
+
+        .projects a {
+            color: #0066cc;
             text-decoration: none;
-            border-bottom: 1px solid #0000ff;
-            transition: all 0.2s ease;
+            font-size: 1rem;
         }
 
-        a:hover {
-            border-bottom: none;
-            color: #ff0000;
+        .projects a:hover {
+            text-decoration: underline;
         }
 
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            .container {
-                padding: 20px;
-            }
+        .contact {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
 
-            h1 {
-                font-size: 36px;
-            }
+        .contact a {
+            color: #0066cc;
+            text-decoration: none;
+            margin-right: 20px;
+        }
 
-            p {
-                font-size: 16px;
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        .resume-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .resume-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
+                width: 150px;
+                height: 150px;
+                margin: 0 auto 20px auto;
+            }
+            
+            body {
+                padding: 20px 15px;
             }
         }
     </style>
 </head>
-
 <body>
-
-    <div class="container">
-        <h1>Hi there :)</h1>
-
-        <p>
-            Welcome to my website, 
-            I am undergrad at IIT Bombay, pursuing Chemistry and research in Artificial intelligence.
-            I am building a deep neural network that upscales the image resolution, this is highly used in the 
-            field of medical imaging.
-        </p>
-
-        <p>
-            Currently serving as the CEO of of ONDC Connect
-        </p>
-
+    <div class="profile-section">
         
+        <div class="profile-content">
+            <h1>Rajveer Yadav</h1>
+            <p>I am an AI researcher with a strong focus on information retrieval systems, leveraging advanced natural language processing techniques to tackle complex “needle in a haystack” problems. My research spans building efficient semantic search pipelines that enable precise and context-aware document retrieval, as well as developing state-of-the-art image super-resolution models that enhance visual data quality for critical applications.</p> 
+            <p>On the engineering side, I have extensive experience in backend development using Golang, where I design and implement scalable, high-performance microservices architectures. My expertise covers building robust APIs, optimizing distributed systems, and ensuring seamless inter-service communication using gRPC. I am adept at architecting real-time systems, including command-line chat applications that deliver low-latency messaging and reliable user experiences.</p> 
+            <p>My cloud infrastructure knowledge is comprehensive, with hands-on experience deploying and managing applications on AWS. I utilize a range of AWS services to ensure scalability, reliability, and security. This includes provisioning compute resources with EC2, orchestrating domain management and DNS routing via Route 53, and architecting scalable, low-latency databases with DynamoDB. I also integrate ElastiCache for in-memory data caching to boost application performance, and leverage AWS Lambda for building serverless event-driven components. My deployments are automated and resilient, following best practices in CI/CD, monitoring, and cost optimization.</p>
+            <p>Beyond core research and engineering, I am passionate about building end-to-end solutions that bridge cutting-edge AI with robust backend systems, ensuring that every project—from real-time chat applications to intelligent search engines—delivers measurable impact and exceptional user experiences.</p>
+            <p><a href="resume.pdf" target="_blank" class="resume-link">View Resume</a></p>
+        </div>
     </div>
 
+    <div class="section">
+        <h2>Projects</h2>
+        <ul class="projects">
+            <li><a href="https://github.com/yourusername/ai-chatbot" target="_blank">CLI chat app</a> - Real time messaging app that runs in your terminal.</li>
+            <li><a href="https://github.com/yourusername/ecommerce-app" target="_blank">ML Metrics Tracker</a> - Visualizes machine learning training losses and inference metrics in real time.</li>
+            <li><a href="https://github.com/yourusername/computer-vision" target="_blank">Hindi-English Translator</a> - Transformer based hindi to english text model</li>
+            <li><a href="https://github.com/yourusername/data-dashboard" target="_blank">RayDB</a> - Redis like Vector Database</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Background</h2>
+        <p>I am a graduate of <b>IIT Bombay</b>, where I majored in Chemistry and was deeply involved in AI research at the <a href="https://www.ee.iitb.ac.in/web/labs/medical-deep-learning-and-artificial-intelligence-lab-medal/" target="_blank">MEDAL Lab IIT Bombay</a>. My academic journey allowed me to blend a strong scientific foundation with hands-on work in machine learning and artificial intelligence, particularly in the context of information retrieval systems and applied NLP.</p> 
+        <p>My technical expertise spans backend development with Golang and the Gin framework, as well as experience building and training deep learning models using PyTorch. I am proficient in deploying and managing scalable applications on AWS and Google Cloud, leveraging modern cloud-native solutions to support robust, production-grade AI systems. I am passionate about the intersection of scientific research and software engineering, and I strive to deliver impactful, well-engineered solutions in every project I undertake.</p>
+    </div>
+
+    <div class="contact">
+        <p>You can reach me at:</p>
+        <p>
+            <a href="mailto:rajveeryadav2711@gmail.com">Email</a>
+            <a href="https://www.linkedin.com/in/rajveer-yadav-3264b722a/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/ray-27" target="_blank">GitHub</a>
+        </p>
+    </div>
 </body>
 </html>
