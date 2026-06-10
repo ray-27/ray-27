@@ -1,79 +1,106 @@
-### 👋 Hi, I'm Rajveer Yadav!
+# 👋 Hi, I'm Rajveer Yadav
 
-🚀 **AI Researcher, Developer & Backend Engineer**  
-🎓 **Graduate from IIT Bombay**  
-💡 Passionate about solving complex problems with AI, building scalable backend systems, and exploring cloud technologies.
-
----
-
-### 🔬 Research Highlights
-
-**📊 Medical Imaging Super-Resolution**  
-- Explored generative models like **GANs** and **Diffusion Models** for realistic image synthesis.  
-- Researched methodologies to enhance **training speed**, **accuracy**, and **efficiency on minimal hardware**.  
-- Worked with datasets like **DIV2K** for general training and **BreastHis** for domain-specific applications.
-
-**🧠 Visual Haystack Problem**  
-- Studied **contextual learning** and how **LLMs** can retrieve relevant information from massive image datasets.  
-- Applied deep learning methods like **contrastive loss** and **contextual embeddings** to improve search in “needle-in-a-haystack” scenarios.  
-- Designed techniques for extracting meaningful embeddings and building efficient retrieval pipelines.
+🚀 **Founding Backend Engineer @ AlgoTest (YC S22) · AI Researcher · Systems Developer**
+🎓 **B.S. Chemistry, IIT Bombay**
+💡 I build things at the intersection of low-latency systems, quantitative infrastructure, and applied AI — from exchange-grade HFT feed handlers to deep learning research.
 
 ---
 
-### 🚀 Projects
+### 💼 Experience
 
-**🔍 [Raydeon – AI Data Analysis Agent](https://raydeon.app)** *(Closed Source)*  
-- Helps users analyze large CSV/Excel datasets through natural language queries and visualizations.  
-- Built with **Go**, **Gin**, **Langraph**, **Gemini**, and deployed on **AWS**.  
-- Uses **PostgreSQL** and **ClickHouse OLAP** for fast and scalable data querying.
+**Founding Backend Engineer — [AlgoTest](https://algotest.in) (YC S22)** *(Nov 2025 – Present)*
 
-**🩺 [AI Medical History Analyzer](https://med.raydeon.app)** *(Open Source)*  
-- Assists doctors by extracting patient data from documents using **OCR** and allowing interactive queries.  
-- Built with **Python** and **Flask**, deployed on **AWS** for real-time healthcare assistance.
+AlgoTest is a YC-backed algorithmic trading platform. I joined as a founding engineer to build the core backend from scratch — the plumbing that lets retail and prop traders wire up their brokerage accounts and execute strategies directly through the platform.
 
-**💬 [rayChats – Real-Time Chat Server](https://github.com/ray-27/rayChats)** *(Open Source)*  
-- High-performance chat server capable of handling **millions of concurrent requests**.  
-- Built with **Go** and **Gin**, focusing on scalability and low-latency communication.
+The core challenge was building a unified execution layer across multiple broker APIs, each with wildly different semantics, rate limits, and failure modes. I designed an **event-driven pub/sub pipeline** for market data ingestion and signal routing, where order placement, modification, and cancellation all flow through an async execution layer with real-time portfolio state updates. Reliability under broker failures and network partitions was a first-class design constraint.
 
 ---
 
-### 🛠 Skills & Expertise
+### ⚡ HFT & Quant Infrastructure
 
-**✔ Programming Languages:**  
-- **Python** – Deep learning, data processing, OCR, and scientific computing.  
-- **Go (Golang)** – High-performance backend systems, REST APIs, concurrency, and scalability.  
-- **Java & C++** – System-level programming, algorithms, and performance optimization.
+A suite of components that together form a production-style exchange data pipeline — from raw multicast frames off the wire to typed messages on an internal bus, ready for a strategy engine to consume.
 
-**✔ Artificial Intelligence & Machine Learning:**  
-- **PyTorch** – Model building for image super-resolution, segmentation, and NLP.  
-- **Contextual & Contrastive Learning** – Improved retrieval and embedding techniques for large datasets.  
-- **GANs & Diffusion Models** – Advanced generative approaches for medical image synthesis.  
-- **Langchain & Langraph** – Intelligent agents for data-driven insights and interactive query handling.
-
-**✔ Backend Development & System Design:**  
-- Built **high-availability systems** with fault tolerance and efficient resource usage.  
-- Designed **scalable architectures**, ensuring seamless handling of millions of requests.  
-- Implemented **CI/CD pipelines** and automated deployments for robust production workflows.
-
-**✔ Cloud Technologies & Databases:**  
-- AWS services: **EC2**, **Lambda**, **Route53**, **Cloudflare**, **CodeDeploy**.  
-- Databases: **PostgreSQL**, **MongoDB**, **Redis**, **ClickHouse OLAP** for optimized data storage and access.
-
-**✔ DevOps & Deployment:**  
-- Containerization, orchestration, and automated workflows for deployment and monitoring.  
-- Secure session management, access control, and scaling strategies for cloud-hosted apps.
-
-**✔ Research & Problem Solving:**  
-- Enhanced model training and efficiency in medical imaging under hardware constraints.  
-- Developed retrieval pipelines leveraging LLMs for searching within massive datasets.
+```
+  [itch-multicast]          [itch-cpp]              [mbus]               [strategy]
+  MoldUDP64 generator  →   ITCH 5.0 parser   →   Disruptor ring   →   Av-Stoikov / risk
+  + gap detection           4.9 ns/msg            sub-5µs p99
+```
 
 ---
 
-### 📫 Connect with Me
+**[Alta-Bus](https://github.com/ray-27/Alta-Bus) — Lock-Free Message Bus** *(Rust)*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rajveeryadav27/)  
+Most pub/sub systems (Redis: ~150–300µs p99, NATS: ~50–150µs p99) are general-purpose and pay the cost of userland sockets on every message. `mbus` is purpose-built for the HFT hot path.
+
+The design is a **LMAX Disruptor-style shared ring buffer**: the producer writes once to a single shared array; each subscriber maintains its own independent atomic read cursor and reads directly — no per-subscriber buffers, no central dispatch thread, no locks anywhere on the hot path. Backpressure is handled at the slot level: a producer checks the minimum consumer cursor before overwriting, so a slow downstream consumer stalls the producer rather than silently corrupting state.
+
+Every slot and every cursor struct is `#[repr(C, align(64))]` — cache-line padded to prevent false sharing, which is the silent latency killer in multi-consumer ring designs. The memory ordering is deliberate: `Release` on the slot sequence commit, `Acquire` on the consumer spin — the minimum ordering that gives correct visibility without unnecessary fence overhead. The result is **sub-5µs p99** end-to-end on a single host. Getting below 1µs would require kernel-bypass (DPDK / Solarflare OpenOnload), which is on the roadmap.
+
+The canonical slot schema (`PriceTick`, `OrderBookDelta` — fixed-point `i64` fields, never `f64`) acts as the lingua franca of the whole pipeline. Everything upstream is protocol-specific; everything downstream is protocol-agnostic.
+
+---
+
+**[ITCH-cpp](https://github.com/ray-27/ITCH-Parser) — NASDAQ ITCH 5.0 Feed Parser** *(C++)*
+
+NASDAQ distributes its full order book via the TotalView-ITCH 5.0 binary protocol over multicast. `itch-cpp` is a **zero-copy, header-only C++ library** that deserializes raw ITCH binary streams into typed structs — fast enough to keep up with the full NASDAQ feed.
+
+The design decision was library, not service: a service boundary would force a serialization round-trip on every message, adding 2–5µs of latency for zero benefit. Instead, the parser is a pure transformation kernel — no threads, no locks, no allocator, no network stack — designed to sit inline inside a feed handler process, calling directly into `mbus`.
+
+All 23 ITCH 5.0 message types are implemented as `std::variant`-based structs with `StrongType<T,Tag>` wrappers for all numeric fields (compile-time domain safety, zero runtime cost). A `SoupBinReader` handles the SoupBinTCP framing layer on top of ITCH — including a non-obvious protocol detail: the SoupBinTCP frame includes a 1-byte packet-type prefix *before* the ITCH message type byte, which caused a subtle off-by-one that made 98% of messages parse as `OrderReplace` until caught and fixed. After the fix, message distribution matched expected NASDAQ proportions (~44% `AddOrder`, ~43% `OrderDelete`).
+
+Benchmark on a 1 GB ITCH file: **205M msg/s at 4.9 ns/msg** (warm cache). Cold-cache on an 11 GB file drops to ~20M msg/s due to page faults — addressed with `MADV_WILLNEED` and multi-pass benchmarking that reports best/avg/worst.
+
+---
+
+**[ITCH-Multicast](https://github.com/ray-27/ITCH-multicaster) — MoldUDP64 Multicast Simulator** *(C++)*
+
+NASDAQ's actual on-the-wire transport is MoldUDP64 — a UDP multicast protocol with sequenced framing and a separate TCP retransmission channel for gap recovery. `itch-multicast` implements this protocol from scratch to give the full pipeline a realistic upstream source.
+
+The sender generates synthetic ITCH messages, wraps them in MoldUDP64 frames with big-endian sequence numbers and 2-byte message length prefixes (matching the real spec byte-for-byte), and blasts them over a multicast group. The receiver reassembles the stream and tracks sequence continuity — if a gap is detected (dropped packet or out-of-order delivery), it flags the missing range and can request retransmission over the TCP gap-fill channel. This is the detail that separates a toy from real infrastructure: in production, packet loss handling is where most feed handler bugs live.
+
+The two SPSC rings inside the pipeline — one for raw JSON frames (~8.2 KB/slot, 1024 slots), one for encoded binary packets (~1.5 KB/slot, 4096 slots) — are sized around worst-case Coinbase WebSocket snapshot bursts, with slot counts chosen to cover burst depth without wasting L3 cache.
+
+---
+
+### 🔬 Research
+
+**Visual Haystack & Retrieval** *(Jan 2025 – Jul 2025)*
+*Guide: Prof. Ganesh Ramakrishnan, CS Dept., IIT Bombay*
+Multi-image question answering — retrieval algorithms, similarity search, and cross-image reasoning over large visual datasets.
+
+**Medical Image Super-Resolution** *(Aug 2023 – Nov 2023)*
+*Guide: Prof. Amit Sethi, MEDAL Lab, EE Dept., IIT Bombay*
+Resolution enhancement on DIV2K and BreastHis using Vision Transformer, SwinIR, SRGAN, Real-ESRGAN, and SinGAN.
+### 🚀 Other Projects
+
+---
+
+**🔍 Raydeon — AI Data Analysis Agent** *(Closed Source)*
+Natural language interface over large CSV/Excel datasets — query and visualize data without writing SQL. Built with **Go + Gin + Langraph + Gemini**; stream-ingests directly into **ClickHouse** and **PostgreSQL** without writing temp files to disk.
+
+**🩺 AI Medical History Analyzer** *(Open Source)*
+Extracts structured patient data from unorganized medical documents using OCR, then lets doctors query records in natural language. Built with **Python + Flask**, deployed on AWS.
+
+**💬 [rayChats — Real-Time Chat Server](https://github.com/ray-27/rayChats)** *(Open Source)*
+WebSocket-based chat backend in **Go + Gin** with **Redis** session management, built for high concurrency and low-latency messaging.
+
+---
+
+### 🛠 Skills
+
+| | |
+|---|---|
+| **Languages** | Go, Rust, C++, Python, TypeScript |
+| **Low-Latency / Systems** | Disruptor ring buffers, SPSC lock-free queues, atomic memory ordering, UDP multicast, ITCH 5.0, MoldUDP64, SoupBinTCP |
+| **AI / ML** | PyTorch, GANs, Diffusion Models, Transformers, Langchain, Langraph |
+| **Backend** | Gin, WebSockets, pub/sub, async pipelines, event-driven architecture |
+| **Databases** | PostgreSQL, ClickHouse, Redis, MongoDB |
+| **Cloud / DevOps** | AWS (EC2, Lambda, Route53, CodeDeploy), Cloudflare, CI/CD |
+
+---
+
+### 📫 Connect
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/rajveeryadav27/)
 [![GitHub](https://img.shields.io/badge/GitHub-black?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ray-27)
-
----
-
-💡 *Building AI solutions, solving real-world problems, and pushing the boundaries of technology!*
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rajveeryadav2711@gmail.com)
